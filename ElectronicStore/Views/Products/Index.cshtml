@@ -34,8 +34,8 @@
                 <td> @product.Name</td>
                 <td> @product.Brand</td>
                 <td> @product.Category</td>
-                <td> @(product.Price)$</td>
-                <td> <img src="@product.ImageUrl" alt="@product.Name" style="max-width: 100px;" /></td>
+                <td> $@(product.Price)</td>
+                <td> <img src="/images/@product.ImageUrl" alt="@product.Name" style="max-width: 100px;" /></td>
                 <td> @product.Description</td>
                 <td> @product.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
                 <td style="white-space: nowrap;">
