@@ -17,16 +17,15 @@ namespace ElectronicStore.Models
         [MaxLength(100)]
         public string Category { get; set; }
 
-        [MaxLength(100)]
+        [Precision(14, 2)]
         public decimal Price { get; set; }
 
-        [Precision(14, 2)]
+        [MaxLength(100)]
         public string Description { get; set; }
 
         [MaxLength(100)]
         public string ImageUrl { get; set; }
 
-        [MaxLength(100)]
         public DateTime CreatedAt { get; set; }
     }
 }
