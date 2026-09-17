@@ -8,10 +8,12 @@ namespace ElectronicStore.Controllers
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext context;
+        private readonly IWebHostEnvironment Environment;
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext context, IWebHostEnvironment Environment)
         {
             this.context = context;
+            this.Environment = Environment;
         }
         public IActionResult Index()
         {
@@ -35,7 +37,8 @@ namespace ElectronicStore.Controllers
             {
                 return View(productDto);
             }
-            return View();
+
+            return RedirectToAction("Index", "Products");
         }
     }
 }
