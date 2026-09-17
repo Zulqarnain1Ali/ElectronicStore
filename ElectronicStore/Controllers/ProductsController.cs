@@ -38,6 +38,17 @@ namespace ElectronicStore.Controllers
                 return View(productDto);
             }
 
+
+            string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            newFileName += Path.GetExtension(productDto.ImageFile.FileName);
+
+            string imagefullpath = Path.Combine(Environment.WebRootPath, "images", newFileName);
+            using (var stream = System.IO.File.Create(imagefullpath))
+            {
+                productDto.ImageFile.CopyTo(stream);
+            }
+
+
             return RedirectToAction("Index", "Products");
         }
     }
