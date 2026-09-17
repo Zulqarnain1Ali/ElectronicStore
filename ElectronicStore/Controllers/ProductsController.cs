@@ -92,5 +92,57 @@ namespace ElectronicStore.Controllers
 
             return View(productDto);
         }
+
+
+        [HttpPost]
+        public IActionResult Edit(int id, ProductDto productDto)
+        {
+            var product = context.Products.Find(id);
+            if(product == null)
+            {
+                return RedirectToAction("Index", "Products");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewData["ProductId"] = product.Id;
+                ViewData["ImageUrl"] = product.ImageUrl;
+                ViewData["CreatedAt"] = product.CreatedAt;
+
+                return View(productDto);
+            }
+
+            string newFileName = product.ImageUrl;
+            if(productDto.ImageFile != null)
+            {
+                newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                newFileName += Path.GetExtension(productDto.ImageFile.FileName);
+
+                string imageFullPath = Environment.WebRootPath + "/products" + newFileName;
+                using (var stream = System.IO.File.Create(imageFullPath))
+                {
+                    productDto.ImageFile.CopyTo(stream);
+                }
+
+                //delete old image
+
+                string oldImageFilePath = Environment.WebRootPath + "images" + product.ImageUrl;
+                System.IO.File.Delete(oldImageFilePath);
+
+                //    string imagefullpath = Path.Combine(Environment.WebRootPath, "images", newFileName);
+                //using (var stream = System.IO.File.Create(imagefullpath))
+                //{
+                //    productDto.ImageFile.CopyTo(stream);
+                //}
+            }
+
+            product.Name = productDto.Name;
+            product.Brand = productDto.Brand;
+            product.Category = productDto.Category;
+            product.Price = productDto.Price;
+            product.Description = productDto.Description;
+            product.ImageUrl = newFileName;
+
+        }
     }
 }
