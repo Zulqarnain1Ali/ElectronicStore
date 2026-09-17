@@ -23,7 +23,6 @@ namespace ElectronicStore.Models
         [MaxLength(100)]
         public string Description { get; set; }
 
-        [MaxLength(100)]
         public string ImageUrl { get; set; }
 
         public DateTime CreatedAt { get; set; }

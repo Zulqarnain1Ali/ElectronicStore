@@ -16,10 +16,9 @@ namespace ElectronicStore.Models
         [Required]
         public decimal Price { get; set; }
 
-        [MaxLength(100)]    
+        [MaxLength(100)]
         public string? Description { get; set; }
 
-        [MaxLength(100)]
         public IFormFile? ImageFile { get; set; }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using ElectronicStore.Models;
 using ElectronicStore.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 
 namespace ElectronicStore.Controllers
 {
-    
+
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext context;
@@ -29,7 +30,7 @@ namespace ElectronicStore.Controllers
         [HttpPost]
         public IActionResult Create(ProductDto productDto)
         {
-            if(productDto.ImageFile == null)
+            if (productDto.ImageFile == null)
             {
                 ModelState.AddModelError("ImageFile", "Please upload an image file.");
             }
@@ -54,8 +55,8 @@ namespace ElectronicStore.Controllers
                 Brand = productDto.Brand,
                 Category = productDto.Category,
                 Price = productDto.Price,
-                Description = productDto.Description,
-                ImageUrl = "/images/" + newFileName,
+                Description = productDto.Description ?? "",
+                ImageUrl = newFileName,
                 CreatedAt = DateTime.Now
             };
 
@@ -63,6 +64,33 @@ namespace ElectronicStore.Controllers
             context.SaveChanges();
 
             return RedirectToAction("Index", "Products");
+
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var product = context.Products.Find(id);
+
+            if (product == null)
+            {
+                return RedirectToAction("Index", "Products");
+            }
+
+            var productDto = new ProductDto()
+            {
+                Name = product.Name,
+                Brand = product.Brand,
+                Category = product.Category,
+                Price = product.Price,
+                Description = product.Description,
+            };
+
+
+            ViewData["ProductId"] = product.Id;
+            ViewData["ImageUrl"] = product.ImageUrl;
+            ViewData["CreatedAt"] = product.CreatedAt;
+
+            return View(productDto);
         }
     }
 }
