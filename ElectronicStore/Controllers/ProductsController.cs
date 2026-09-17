@@ -118,7 +118,8 @@ namespace ElectronicStore.Controllers
                 newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
                 newFileName += Path.GetExtension(productDto.ImageFile.FileName);
 
-                string imageFullPath = Environment.WebRootPath + "images" + newFileName;
+                //string imageFullPath = Environment.WebRootPath + "images" + newFileName;
+                string imageFullPath = Path.Combine(Environment.WebRootPath, "images", newFileName);
                 using (var stream = System.IO.File.Create(imageFullPath))
                 {
                     productDto.ImageFile.CopyTo(stream);
