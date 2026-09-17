@@ -1,4 +1,5 @@
-﻿using ElectronicStore.Services;
+﻿using ElectronicStore.Models;
+using ElectronicStore.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicStore.Controllers
@@ -20,6 +21,20 @@ namespace ElectronicStore.Controllers
 
         public IActionResult Create()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(ProductDto productDto)
+        {
+            if(productDto.ImageFile == null)
+            {
+                ModelState.AddModelError("ImageFile", "Please upload an image file.");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(productDto);
+            }
             return View();
         }
     }
