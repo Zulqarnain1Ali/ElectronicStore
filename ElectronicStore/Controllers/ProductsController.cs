@@ -59,6 +59,9 @@ namespace ElectronicStore.Controllers
                 CreatedAt = DateTime.Now
             };
 
+            context.Products.Add(product);
+            context.SaveChanges();
+
             return RedirectToAction("Index", "Products");
         }
     }
