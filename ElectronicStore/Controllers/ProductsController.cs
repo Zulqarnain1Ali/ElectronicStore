@@ -98,7 +98,7 @@ namespace ElectronicStore.Controllers
         public IActionResult Edit(int id, ProductDto productDto)
         {
             var product = context.Products.Find(id);
-            if(product == null)
+            if (product == null)
             {
                 return RedirectToAction("Index", "Products");
             }
@@ -113,20 +113,27 @@ namespace ElectronicStore.Controllers
             }
 
             string newFileName = product.ImageUrl;
-            if(productDto.ImageFile != null)
+            if (productDto.ImageFile != null)
             {
                 newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
                 newFileName += Path.GetExtension(productDto.ImageFile.FileName);
 
-                string imageFullPath = Environment.WebRootPath + "/products" + newFileName;
+                string imageFullPath = Environment.WebRootPath + "images" + newFileName;
                 using (var stream = System.IO.File.Create(imageFullPath))
                 {
                     productDto.ImageFile.CopyTo(stream);
                 }
 
                 //delete old image
-                string oldImageFilePath = Environment.WebRootPath + "images" + product.ImageUrl;
-                System.IO.File.Delete(oldImageFilePath);
+                if (!string.IsNullOrEmpty(product.ImageUrl))
+                {
+                    string oldImageFilePath = Path.Combine(Environment.WebRootPath, "images", product.ImageUrl);
+                    //string oldImageFilePath = Environment.WebRootPath + "images" + product.ImageUrl;
+                    if (System.IO.File.Exists(oldImageFilePath))
+                    {
+                        System.IO.File.Delete(oldImageFilePath);
+                    }
+                }
 
             }
 
