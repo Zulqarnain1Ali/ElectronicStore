@@ -48,6 +48,16 @@ namespace ElectronicStore.Controllers
                 productDto.ImageFile.CopyTo(stream);
             }
 
+            Product product = new Product()
+            {
+                Name = productDto.Name,
+                Brand = productDto.Brand,
+                Category = productDto.Category,
+                Price = productDto.Price,
+                Description = productDto.Description,
+                ImageUrl = "/images/" + newFileName,
+                CreatedAt = DateTime.Now
+            };
 
             return RedirectToAction("Index", "Products");
         }
