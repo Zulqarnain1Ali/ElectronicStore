@@ -125,15 +125,9 @@ namespace ElectronicStore.Controllers
                 }
 
                 //delete old image
-
                 string oldImageFilePath = Environment.WebRootPath + "images" + product.ImageUrl;
                 System.IO.File.Delete(oldImageFilePath);
 
-                //    string imagefullpath = Path.Combine(Environment.WebRootPath, "images", newFileName);
-                //using (var stream = System.IO.File.Create(imagefullpath))
-                //{
-                //    productDto.ImageFile.CopyTo(stream);
-                //}
             }
 
             product.Name = productDto.Name;
@@ -143,6 +137,9 @@ namespace ElectronicStore.Controllers
             product.Description = productDto.Description;
             product.ImageUrl = newFileName;
 
+            context.SaveChanges();
+
+            return RedirectToAction("Index", "Products");
         }
     }
 }
