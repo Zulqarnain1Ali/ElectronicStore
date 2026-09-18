@@ -126,7 +126,7 @@ namespace ElectronicStore.Controllers
                 }
 
                 //delete old image
-                if (!string.IsNullOrEmpty(product.ImageUrl))
+                if (!string.IsNullOrEmpty(product.ImageUrl) && product.ImageUrl != "1.jpg")
                 {
                     string oldImageFilePath = Path.Combine(Environment.WebRootPath, "images", product.ImageUrl);
                     //string oldImageFilePath = Environment.WebRootPath + "images" + product.ImageUrl;
