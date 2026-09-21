@@ -5,7 +5,6 @@ namespace ElectronicStore.Models
 {
     public class Product
     {
-        
         public int Id { get; set; }
 
         [MaxLength(100)]
