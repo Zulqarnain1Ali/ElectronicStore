@@ -136,44 +136,57 @@ namespace ElectronicStore.Controllers
 
             try
             {
+                //throw new Exception("Simulated disk/database failure!");
 
-            }
-            string newFileName = product.ImageUrl;
-            if (productDto.ImageFile != null)
-            {
-                newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                newFileName += Path.GetExtension(productDto.ImageFile.FileName);
-
-                //string imageFullPath = Environment.WebRootPath + "images" + newFileName;
-                string imageFullPath = Path.Combine(Environment.WebRootPath, "images", newFileName);
-                using (var stream = System.IO.File.Create(imageFullPath))
+                string newFileName = product.ImageUrl;
+                if (productDto.ImageFile != null)
                 {
-                    await productDto.ImageFile.CopyToAsync(stream);
-                }
+                    newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFileName += Path.GetExtension(productDto.ImageFile.FileName);
 
-                //delete old image
-                if (!string.IsNullOrEmpty(product.ImageUrl) && product.ImageUrl != "1.jpg")
-                {
-                    string oldImageFilePath = Path.Combine(Environment.WebRootPath, "images", product.ImageUrl);
-                    //string oldImageFilePath = Environment.WebRootPath + "images" + product.ImageUrl;
-                    if (System.IO.File.Exists(oldImageFilePath))
+                    //string imageFullPath = Environment.WebRootPath + "images" + newFileName;
+                    string imageFullPath = Path.Combine(Environment.WebRootPath, "images", newFileName);
+                    using (var stream = System.IO.File.Create(imageFullPath))
                     {
-                        System.IO.File.Delete(oldImageFilePath);
+                        await productDto.ImageFile.CopyToAsync(stream);
                     }
-                }
 
+                    //delete old image
+                    if (!string.IsNullOrEmpty(product.ImageUrl) && product.ImageUrl != "1.jpg")
+                    {
+                        string oldImageFilePath = Path.Combine(Environment.WebRootPath, "images", product.ImageUrl);
+                        //string oldImageFilePath = Environment.WebRootPath + "images" + product.ImageUrl;
+                        if (System.IO.File.Exists(oldImageFilePath))
+                        {
+                            System.IO.File.Delete(oldImageFilePath);
+                        }
+                    }
+
+                }
+                product.Name = productDto.Name;
+                product.Brand = productDto.Brand;
+                product.Category = productDto.Category;
+                product.Price = productDto.Price;
+                product.Description = productDto.Description;
+                product.ImageUrl = newFileName;
+
+                await context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Products");
+            }
+            catch(Exception ex)
+            {
+                ModelState.AddModelError("", "Unable to edit the product: " + ex.Message);
+
+                ViewData["ProductId"] = product.Id;
+                ViewData["ImageUrl"] = product.ImageUrl;
+                ViewData["CreatedAt"] = product.CreatedAt;
+
+                return View(productDto);
+                
             }
 
-            product.Name = productDto.Name;
-            product.Brand = productDto.Brand;
-            product.Category = productDto.Category;
-            product.Price = productDto.Price;
-            product.Description = productDto.Description;
-            product.ImageUrl = newFileName;
-
-            await context.SaveChangesAsync();
-
-            return RedirectToAction("Index", "Products");
+            
         }
 
 
