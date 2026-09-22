@@ -1,6 +1,7 @@
 ﻿using ElectronicStore.Models;
 using ElectronicStore.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 
 namespace ElectronicStore.Controllers
@@ -16,19 +17,30 @@ namespace ElectronicStore.Controllers
             this.context = context;
             this.Environment = Environment;
         }
-        public IActionResult Index()
+
+
+
+
+
+        public async Task<IActionResult> Index()
         {
-            var products = context.Products.ToList();
+            var products = await context.Products.ToListAsync();
             return View(products);
         }
+
+
+
 
         public IActionResult Create()
         {
             return View();
         }
 
+
+
+        //Create
         [HttpPost]
-        public IActionResult Create(ProductDto productDto)
+        public async Task<IActionResult> Create(ProductDto productDto)
         {
             if (productDto.ImageFile == null)
             {
@@ -46,7 +58,7 @@ namespace ElectronicStore.Controllers
             string imagefullpath = Path.Combine(Environment.WebRootPath, "images", newFileName);
             using (var stream = System.IO.File.Create(imagefullpath))
             {
-                productDto.ImageFile.CopyTo(stream);
+                await productDto.ImageFile.CopyToAsync(stream);
             }
 
             Product product = new Product()
@@ -61,15 +73,15 @@ namespace ElectronicStore.Controllers
             };
 
             context.Products.Add(product);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Products");
 
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var product = context.Products.Find(id);
+            var product = await context.Products.FindAsync(id);
 
             if (product == null)
             {
@@ -95,9 +107,9 @@ namespace ElectronicStore.Controllers
 
 
         [HttpPost]
-        public IActionResult Edit(int id, ProductDto productDto)
+        public async Task<IActionResult> Edit(int id, ProductDto productDto)
         {
-            var product = context.Products.Find(id);
+            var product = await context.Products.FindAsync(id);
             if (product == null)
             {
                 return RedirectToAction("Index", "Products");
@@ -122,7 +134,7 @@ namespace ElectronicStore.Controllers
                 string imageFullPath = Path.Combine(Environment.WebRootPath, "images", newFileName);
                 using (var stream = System.IO.File.Create(imageFullPath))
                 {
-                    productDto.ImageFile.CopyTo(stream);
+                    await productDto.ImageFile.CopyToAsync(stream);
                 }
 
                 //delete old image
@@ -145,26 +157,27 @@ namespace ElectronicStore.Controllers
             product.Description = productDto.Description;
             product.ImageUrl = newFileName;
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Products");
         }
 
 
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var product = context.Products.Find(id);
+            var product = await context.Products.FindAsync(id);
             if (product == null)
             {
                 return RedirectToAction("Index", "Products");
             }
 
-            string imageFullPath = Environment.WebRootPath + "images" + product.ImageUrl;
+            string imageFullPath = Path.Combine(Environment.WebRootPath, "images", product.ImageUrl);
+            //string imageFullPath = Environment.WebRootPath + "images" + product.ImageUrl;
             System.IO.File.Delete(imageFullPath);
 
             context.Products.Remove(product);
-            context.SaveChanges(true);
+            await context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Products");
         }
