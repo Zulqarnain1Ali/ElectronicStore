@@ -51,31 +51,41 @@ namespace ElectronicStore.Controllers
                 return View(productDto);
             }
 
-
-            string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-            newFileName += Path.GetExtension(productDto.ImageFile!.FileName);
-
-            string imagefullpath = Path.Combine(Environment.WebRootPath, "images", newFileName);
-            using (var stream = System.IO.File.Create(imagefullpath))
+            try
             {
-                await productDto.ImageFile.CopyToAsync(stream);
+                //throw new Exception("Simulated disk/database failure!");
+                string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                newFileName += Path.GetExtension(productDto.ImageFile!.FileName);
+
+                string imagefullpath = Path.Combine(Environment.WebRootPath, "images", newFileName);
+                using (var stream = System.IO.File.Create(imagefullpath))
+                {
+                    await productDto.ImageFile.CopyToAsync(stream);
+                }
+
+                Product product = new Product()
+                {
+                    Name = productDto.Name,
+                    Brand = productDto.Brand,
+                    Category = productDto.Category,
+                    Price = productDto.Price,
+                    Description = productDto.Description ?? "",
+                    ImageUrl = newFileName,
+                    CreatedAt = DateTime.Now
+                };
+
+                context.Products.Add(product);
+                await context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Products");
             }
 
-            Product product = new Product()
+            catch(Exception ex)
             {
-                Name = productDto.Name,
-                Brand = productDto.Brand,
-                Category = productDto.Category,
-                Price = productDto.Price,
-                Description = productDto.Description ?? "",
-                ImageUrl = newFileName,
-                CreatedAt = DateTime.Now
-            };
-
-            context.Products.Add(product);
-            await context.SaveChangesAsync();
-
-            return RedirectToAction("Index", "Products");
+                ModelState.AddModelError("", "Can't save the product: " + ex.Message);
+                return View(productDto);
+            }
+           
 
         }
 
@@ -124,6 +134,10 @@ namespace ElectronicStore.Controllers
                 return View(productDto);
             }
 
+            try
+            {
+
+            }
             string newFileName = product.ImageUrl;
             if (productDto.ImageFile != null)
             {

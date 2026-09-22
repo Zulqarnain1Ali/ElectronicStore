@@ -4,6 +4,8 @@
     <div class="col-md-8 mx-auto rounded border p-3">
         <h2 class="text-center mb-5">New Product</h2>
 
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
         <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div class="form-group mb-3">
                 <label asp-for="Name"></label>
