@@ -123,7 +123,7 @@ namespace ElectronicStore.Controllers
             if (product == null)
             {
                 return RedirectToAction("Index", "Products");
-            }
+            } 
 
             if (!ModelState.IsValid)
             {
